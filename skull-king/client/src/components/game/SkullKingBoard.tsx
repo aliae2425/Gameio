@@ -1,12 +1,52 @@
+import { useState } from 'react';
 import type { BoardProps } from 'boardgame.io/react';
 import { SkullKingGameState } from '../../game/types';
 import { PlayerHand } from './PlayerHand';
 import { BiddingPanel } from './BiddingPanel';
-import { ScoreSidebar } from './ScoreSidebar';
+import { GameSidebar } from './GameSidebar'; // Changed from ScoreSidebar
 import { PlayerSeat } from './PlayerSeat';
 import { CenterTrick } from './CenterTrick';
 import { ScaryMaryModal } from './ScaryMaryModal';
 import { WhaleModal } from './WhaleModal';
+import { ScoreBoard } from './ScoreBoard'; // Renamed import if file was ScoreBoard.tsx
+
+function getPositionClass(myIndex: number, targetIndex: number, total: number) {
+  if (myIndex === -1) return ''; // Should handle spectator logic if needed
+  
+  const diff = (targetIndex - myIndex + total) % total;
+  
+  if (diff === 0) return 'seat-bottom';
+  
+  if (total === 2) return 'seat-top';
+  
+  if (total === 3) {
+    if (diff === 1) return 'seat-top-left';
+    return 'seat-top-right';
+  }
+  
+  if (total === 4) {
+    if (diff === 1) return 'seat-left';
+    if (diff === 2) return 'seat-top';
+    return 'seat-right';
+  }
+  
+  if (total === 5) {
+      if (diff === 1) return 'seat-left';
+      if (diff === 2) return 'seat-top-left';
+      if (diff === 3) return 'seat-top-right';
+      return 'seat-right';
+  }
+  
+  if (total === 6) {
+      if (diff === 1) return 'seat-left';
+      if (diff === 2) return 'seat-top-left';
+      if (diff === 3) return 'seat-top';
+      if (diff === 4) return 'seat-top-right';
+      return 'seat-right';
+  }
+  
+  return '';
+}
 
 export function SkullKingBoard({
   G,
@@ -14,13 +54,16 @@ export function SkullKingBoard({
   moves,
   playerID,
   isActive,
-}: BoardProps<SkullKingGameState>) {
+  matchID,
+}: BoardProps<SkullKingGameState> & { matchID?: string }) {
+  const [showScore, setShowScore] = useState(false);
+  
   const myPlayer = playerID ? G.players[playerID] : null;
   const isBidding = G.phase === 'bidding';
   const isPlaying = G.phase === 'playing';
 
-  // Opponents = everyone except me, in display order
-  const opponents = G.playerOrder.filter(id => id !== playerID);
+  const myIndex = playerID ? G.playerOrder.indexOf(playerID) : -1;
+  const totalPlayers = G.playerOrder.length;
 
   /* ---- Game Over ---- */
   if (ctx.gameover) {
@@ -42,80 +85,93 @@ export function SkullKingBoard({
     );
   }
 
-  /* ---- Phase label ---- */
-  const phaseLabel = isBidding
-    ? '🎯 Enchères'
-    : isPlaying
-      ? `🃏 Tour de ${G.players[ctx.currentPlayer]?.name ?? '?'}`
-      : '📊 Calcul des scores…';
-
   return (
     <div className="sk-board">
-      {/* ===== HEADER ===== */}
-      <header className="sk-header">
-        <div className="sk-header-info">
-          <span className="sk-header-round">M {G.round?.roundNumber ?? 0}/10</span>
-          <span className="sk-header-phase">{phaseLabel}</span>
-        </div>
-        <ScoreSidebar G={G} playerID={playerID ?? null} />
-      </header>
-
-      {/* ===== MIDDLE : opponents + table ===== */}
-      <div className="sk-middle">
-        {/* Opponent seats */}
-        <div className="sk-opponents">
-          {opponents.map(id => (
-            <PlayerSeat
-              key={id}
-              player={G.players[id]}
-              isActive={G.phase !== 'bidding'}
-              isCurrentTurn={ctx.currentPlayer === id}
-            />
-          ))}
-        </div>
-
-        {/* Table felt with trick */}
-        <div className="sk-table">
-          <div className="sk-felt">
-            {isPlaying && (
+      
+      {/* ===== LEFT: Game Area ===== */}
+      <div className="sk-game-area">
+        <div className="sk-table-felt">
+          
+          {/* Center Trick */}
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 5 }}>
+             {/* CenterTrick logic needs update to center properly */}
+             {isPlaying && (
               <CenterTrick
                 trick={G.round?.currentTrick ?? null}
                 players={G.players}
               />
             )}
             {isBidding && (
-              <div style={{ color: 'var(--c-text-dim)', fontSize: 13, textAlign: 'center' }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>🎯</div>
-                Tous les joueurs misent simultanément…
+              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, textAlign: 'center' }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🎯</div>
+                Phase d'enchères
               </div>
             )}
           </div>
+
+          {/* Players */}
+          {G.playerOrder.map((id, index) => {
+             const posClass = getPositionClass(myIndex, index, totalPlayers);
+             // Skip rendering My Seat logic via PlayerSeat component if we want custom handler for Bottom
+             // Actually PlayerSeat handles avatar/name/bid. Hand logic is separate.
+             // But for 'seat-bottom', we might want to hide hand stack since we show real cards.
+             // PlayerSeat handles showing stack only if useful.
+             
+             return (
+                <PlayerSeat
+                  key={id}
+                  player={G.players[id]}
+                  isActive={G.phase !== 'bidding'}
+                  isCurrentTurn={ctx.currentPlayer === id}
+                  className={posClass}
+                />
+             );
+          })}
+
+          {/* MY HAND (Absolute Bottom) */}
+          {myPlayer && (
+            <div className="my-hand-container">
+               <PlayerHand
+                 cards={myPlayer.hand}
+                 isActive={isPlaying && isActive && ctx.currentPlayer === playerID}
+                 leadSuit={G.round?.currentTrick?.leadSuit ?? null}
+                 onPlayCard={(cardId) => moves.PlayCard(cardId)}
+                 silent={isBidding}
+               />
+            </div>
+          )}
+
+          {/* Bidding Overlay */}
+          {isBidding && myPlayer && (
+             <BiddingPanel
+                roundNumber={G.round?.roundNumber ?? 1}
+                handSize={myPlayer.hand.length}
+                currentBid={myPlayer.bid}
+                onBid={(bid) => moves.PlaceBid(bid)}
+                isActive={isActive}
+             />
+          )}
+
         </div>
       </div>
 
-      {/* ===== BOTTOM : main toujours visible ===== */}
-      {myPlayer && (
-        <PlayerHand
-          cards={myPlayer.hand}
-          isActive={isPlaying && isActive && ctx.currentPlayer === playerID}
-          leadSuit={G.round?.currentTrick?.leadSuit ?? null}
-          onPlayCard={(cardId) => moves.PlayCard(cardId)}
-          silent={isBidding}
-        />
+      {/* ===== RIGHT: Sidebar ===== */}
+      <GameSidebar 
+        G={G} 
+        playerID={playerID ?? null} 
+        matchID={matchID} 
+        onToggleScore={() => setShowScore(!showScore)}
+      />
+
+      {/* ===== MODALS ===== */}
+      {showScore && (
+        <div className="bid-overlay" style={{ pointerEvents: 'auto', background: 'rgba(0,0,0,0.85)' }} onClick={() => setShowScore(false)}>
+          <div onClick={e => e.stopPropagation()}>
+             <ScoreBoard G={G} playerID={playerID} onClose={() => setShowScore(false)} />
+          </div>
+        </div>
       )}
 
-      {/* BiddingPanel en overlay par-dessus la main (position: fixed) */}
-      {isBidding && myPlayer && (
-        <BiddingPanel
-          roundNumber={G.round?.roundNumber ?? 1}
-          handSize={myPlayer.hand.length}
-          currentBid={myPlayer.bid}
-          onBid={(bid) => moves.PlaceBid(bid)}
-          isActive={isActive}
-        />
-      )}
-
-      {/* ===== MODALES ===== */}
       {G.pendingScaryMary?.playerId === playerID && (
         <ScaryMaryModal onChoice={(choice) => moves.DeclareScareMary(choice)} />
       )}

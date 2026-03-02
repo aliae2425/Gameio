@@ -3,22 +3,36 @@ import { SkullKingGameState } from '../../game/types';
 interface Props {
   G: SkullKingGameState;
   playerID: string | null;
+  onClose?: () => void;
 }
 
-export function ScoreBoard({ G, playerID }: Props) {
+export function ScoreBoard({ G, playerID, onClose }: Props) {
+  // Sort players by total score simply for display? Or keep seat order.
+  // Usually scoreboard sorted by score is nice, but history table often matches seat order.
+  // Let's keep G.playerOrder for consistency.
+  
   return (
-    <div className="scoreboard">
-      <h3>Scores — Manche {G.round?.roundNumber ?? 0}/10</h3>
-      <table>
+    <div className="scoreboard-modal">
+      <div className="scoreboard-title">
+        Tableau des Scores
+        {onClose && (
+           <button 
+             onClick={onClose} 
+             style={{ float: 'right', fontSize: 24, background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}
+           >
+             ×
+           </button>
+        )}
+      </div>
+      
+      <table className="scoreboard-table">
         <thead>
           <tr>
-            <th>Joueur</th>
-            <th>Mise</th>
-            <th>Plis</th>
-            <th>Total</th>
+            <th style={{ textAlign: 'left' }}>Joueur</th>
             {G.scoreHistory.map(rs => (
               <th key={rs.round}>M{rs.round}</th>
             ))}
+            <th>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -27,15 +41,20 @@ export function ScoreBoard({ G, playerID }: Props) {
             const isMe = id === playerID;
             return (
               <tr key={id} className={isMe ? 'me' : ''}>
-                <td>{p.name}{isMe ? ' (vous)' : ''}</td>
-                <td>
-                  {p.bid === null ? '?' : p.bid === -1 ? '✓' : p.bid}
+                <td style={{ textAlign: 'left' }}>
+                  {p.name} {isMe && '(Moi)'}
                 </td>
-                <td>{G.phase === 'playing' ? p.tricksWon : '-'}</td>
-                <td><strong>{p.totalScore}</strong></td>
-                {G.scoreHistory.map(rs => (
-                  <td key={rs.round}>{rs.scores[id]?.roundPoints ?? ''}</td>
-                ))}
+                {G.scoreHistory.map(rs => {
+                    const score = rs.scores[id]?.roundPoints ?? 0;
+                    return (
+                      <td key={rs.round} className={score < 0 ? 'score-negative' : score > 0 ? 'score-positive' : ''}>
+                        {score}
+                      </td>
+                    );
+                })}
+                <td style={{ fontWeight: 800, fontSize: 16 }}>
+                   {p.totalScore}
+                </td>
               </tr>
             );
           })}

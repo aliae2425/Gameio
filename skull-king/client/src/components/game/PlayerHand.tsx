@@ -13,41 +13,37 @@ interface Props {
   isActive: boolean;
   leadSuit: Suit | null;
   onPlayCard: (cardId: string) => void;
-  /** Masque le message "en attente" — utile quand le bid panel overlay est affiché */
   silent?: boolean;
 }
 
 export function PlayerHand({ cards, isActive, leadSuit, onPlayCard, silent }: Props) {
+  // If not active, just show cards dimmed
   if (!isActive) {
     return (
-      <div className="sk-my-area">
-        <span className="my-hand-label">Ma main</span>
-        <div className="my-hand-cards">
-          {cards.map(card => (
-            <CardComponent key={card.id} card={card} disabled />
-          ))}
-        </div>
-        {!silent && <p className="waiting-turn">En attente de votre tour…</p>}
-      </div>
+      <>
+        {cards.map(card => (
+          <div key={card.id} style={{ margin: '0 -15px' }}>
+             <CardComponent card={card} disabled />
+          </div>
+        ))}
+      </>
     );
   }
 
   return (
-    <div className="sk-my-area">
-      <span className="my-hand-label">Ma main — cliquez une carte pour jouer</span>
-      <div className="my-hand-cards">
-        {cards.map(card => {
-          const playable = canPlay(card, leadSuit, cards);
-          return (
+    <>
+      {cards.map(card => {
+        const playable = canPlay(card, leadSuit, cards);
+        return (
+          <div key={card.id} style={{ margin: '0 -15px', transition: 'margin 0.2s' }} className="hand-card-wrapper">
             <CardComponent
-              key={card.id}
               card={card}
               disabled={!playable}
               onClick={playable ? () => onPlayCard(card.id) : undefined}
             />
-          );
-        })}
-      </div>
-    </div>
+          </div>
+        );
+      })}
+    </>
   );
 }

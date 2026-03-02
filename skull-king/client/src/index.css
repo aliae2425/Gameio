@@ -2,32 +2,34 @@
    SKULL KING — Design System
    ================================================================ */
 :root {
-  --c-bg:          #07111e;
-  --c-felt:        #0a1e12;
-  --c-felt-border: #1a3a22;
-  --c-surface:     #0f2035;
-  --c-surface2:    #162d48;
-  --c-border:      #1e3a5a;
-  --c-gold:        #f0d060;
-  --c-gold-dim:    #a88c30;
-  --c-text:        #d4e8f4;
-  --c-text-dim:    #7a9bb5;
-  --c-danger:      #e74c3c;
-  --c-success:     #2ecc71;
-  --c-active:      #3498db;
+  --c-bg:          #202225;
+  --c-felt:        #2f3136;
+  --c-felt-border: #40444b;
+  --c-surface:     #2f3136;
+  --c-surface2:    #36393f;
+  --c-sidebar:     #18191c; /* Sidebar background */
+  --c-border:      #202225;
+  --c-gold:        #f1c40f;
+  --c-gold-dim:    #b7950b;
+  --c-text:        #dcddde;
+  --c-text-dim:    #72767d;
+  --c-danger:      #ed4245;
+  --c-success:     #3ba55c;
+  --c-active:      #5865f2;
 
-  /* Suits */
-  --c-yellow: #e8c840;
-  --c-blue:   #3a80cc;
-  --c-purple: #8844bb;
-  --c-green:  #2e9944;
+  /* Suits - Standard colors */
+  --c-yellow: #f1c40f;
+  --c-blue:   #3498db;
+  --c-purple: #9b59b6;
+  --c-green:  #2ecc71;
+  --c-black:  #23272a;
 
   /* Card dimensions */
-  --card-w: 72px;
-  --card-h: 104px;
+  --card-w: 88px;
+  --card-h: 124px;
   --card-r: 8px;
 
-  --sidebar-w: 340px;
+  --sidebar-w: 260px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,15 +37,56 @@
 html, body, #root { height: 100%; }
 
 body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   background: var(--c-bg);
   color: var(--c-text);
   overflow: hidden;
 }
 
 /* ================================================================
-   KEYFRAMES
+   BOARD LAYOUT
    ================================================================ */
+.sk-board {
+  display: grid;
+  grid-template-columns: 1fr var(--sidebar-w);
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* LEFT: Game Area */
+.sk-game-area {
+  position: relative;
+  background: var(--c-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* The Table (Felt) */
+.sk-table-felt {
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  max-height: 800px;
+  background: var(--c-felt);
+  border: 4px solid var(--c-felt-border);
+  border-radius: 60px;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* RIGHT: Sidebar */
+.sk-sidebar {
+  background: var(--c-sidebar);
+  border-left: 1px solid #000;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  z-index: 50;
+}
+
+/* ... existing code ... */
 @keyframes cardPlay {
   from {
     transform: translateY(-50px) scale(0.65) rotate(var(--r, 0deg));
@@ -100,105 +143,185 @@ body {
 }
 
 /* ================================================================
-   BOARD LAYOUT (CSS Grid full-viewport)
+   BOARD LAYOUT (Left: Table, Right: Sidebar)
    ================================================================ */
 .sk-board {
   display: grid;
-  grid-template-rows: 48px 1fr auto;
+  grid-template-columns: 1fr var(--sidebar-w);
   height: 100dvh;
   overflow: hidden;
+  background: var(--c-bg);
 }
 
-/* Header */
-.sk-header {
+.sk-game-area {
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
-  z-index: 10;
-}
-
-.sk-header-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 13px;
-  color: var(--c-text-dim);
-}
-
-.sk-header-round {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--c-gold);
-}
-
-.sk-header-phase {
-  background: var(--c-surface2);
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-/* Middle area (opponents + table + trick) */
-.sk-middle {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: radial-gradient(ellipse at center, #0a1e14 0%, var(--c-bg) 100%);
-}
-
-.sk-opponents {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: flex-start;
-  padding: 12px 24px 0;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.sk-table {
-  flex: 1;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 12px;
+  align-items: center;
+  padding: 5%;
 }
 
-/* Table felt circle */
-.sk-felt {
+.sk-table-felt {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
   background: var(--c-felt);
-  border: 2px solid var(--c-felt-border);
-  border-radius: 24px;
-  padding: 20px 32px;
-  min-width: 500px;
-  min-height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 2px 20px rgba(0,0,0,0.5), 0 4px 24px rgba(0,0,0,0.4);
+  border: 4px solid var(--c-felt-border);
+  border-radius: 40px;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0,0,0,0.4);
 }
 
-/* Bottom: player hand or bid panel */
-.sk-my-area {
-  background: var(--c-surface);
-  border-top: 1px solid var(--c-border);
-  padding: 12px 16px;
-  min-height: 160px;
+/* RIGHT: Sidebar */
+.sk-sidebar {
+  background: var(--c-sidebar);
+  border-left: 1px solid #111;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  z-index: 100;
 }
 
 /* ================================================================
-   CARDS
+   PLAYER POSITIONS (Absolute on Felt)
+   ================================================================ */
+.seat-pos {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+/* My seat (Bottom) */
+.seat-bottom {
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Top (Opponent) */
+.seat-top {
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Left (Opponent) */
+.seat-left {
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  align-items: flex-start;
+}
+
+/* Right (Opponent) */
+.seat-right {
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  align-items: flex-end;
+}
+
+/* Top-Left (Opponent - 5/6 players) */
+.seat-top-left {
+  top: 40px;
+  left: -20px;
+}
+
+/* Top-Right (Opponent - 5/6 players) */
+.seat-top-right {
+  top: 40px;
+  right: -20px;
+}
+
+/* AVATAR Styling */
+.player-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--c-surface2);
+  border: 3px solid var(--c-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.player-avatar.active {
+  border-color: var(--c-gold);
+  box-shadow: 0 0 0 4px rgba(241, 196, 15, 0.3);
+}
+
+.player-info-pill {
+  background: #111;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  margin-top: -10px;
+  z-index: 11;
+  border: 1px solid #333;
+}
+
+.player-bid-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: var(--c-surface2);
+  border: 1px solid var(--c-text-dim);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 10px;
+  color: var(--c-text-dim);
+}
+
+/* HANDS */
+.my-hand-container {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: -40px; /* Overlap */
+  z-index: 20;
+}
+
+.my-hand-container:hover { gap: -20px; }
+
+/* Opponent Hands (Vertical or Horizontal stacks) */
+.opp-hand-stack {
+  position: relative;
+  width: 40px;
+  height: 60px;
+}
+
+.opp-card-back {
+  width: 60px;
+  height: 90px;
+  background: #23272a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  position: absolute;
+  background-image: radial-gradient(#333 15%, transparent 16%); 
+  background-size: 8px 8px;
+}
+
+/* ================================================================
+   CARDS (Refreshed Design - White Bg)
    ================================================================ */
 .card {
   width: var(--card-w);
   height: var(--card-h);
   border-radius: var(--card-r);
-  border: 2px solid rgba(255,255,255,0.15);
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -206,97 +329,199 @@ body {
   position: relative;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.1s ease, margin 0.2s ease, box-shadow 0.2s;
   overflow: hidden;
   flex-shrink: 0;
+  border: 1px solid #ccc;
 }
 
 .card:hover:not(.card-disabled):not(.card-back) {
-  transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,255,255,0.3);
-  z-index: 10;
+  transform: translateY(-20px) scale(1.1);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+  z-index: 100;
 }
 
 .card-disabled {
-  filter: brightness(0.45) saturate(0.5);
+  filter: grayscale(1) opacity(0.6);
   cursor: not-allowed;
-  pointer-events: none;
 }
 
-/* Back face */
+/* Back face matches the table felt style somewhat or dark pattern */
 .card-back {
-  background: linear-gradient(135deg, #0f2035 25%, #162d48 25%, #162d48 50%, #0f2035 50%, #0f2035 75%, #162d48 75%);
-  background-size: 12px 12px;
-  border-color: var(--c-border);
-  cursor: default;
+  background: #23272a;
+  background-image: 
+    linear-gradient(30deg, #2c2f33 12%, transparent 12.5%, transparent 87%, #2c2f33 87.5%, #2c2f33),
+    linear-gradient(150deg, #2c2f33 12%, transparent 12.5%, transparent 87%, #2c2f33 87.5%, #2c2f33),
+    linear-gradient(30deg, #2c2f33 12%, transparent 12.5%, transparent 87%, #2c2f33 87.5%, #2c2f33),
+    linear-gradient(150deg, #2c2f33 12%, transparent 12.5%, transparent 87%, #2c2f33 87.5%, #2c2f33),
+    linear-gradient(60deg, #2c2f3377 25%, transparent 25.5%, transparent 75%, #2c2f3377 75%, #2c2f3377),
+    linear-gradient(60deg, #2c2f3377 25%, transparent 25.5%, transparent 75%, #2c2f3377 75%, #2c2f3377);
+  background-size: 20px 35px;
+  background-position: 0 0, 0 0, 10px 18px, 10px 18px, 0 0, 10px 18px;
+  border: 2px solid #555;
 }
-.card-back::after {
-  content: '☠️';
-  font-size: 24px;
-  opacity: 0.4;
-}
+
+.card-back::after { content: none; }
 
 /* Numbered cards */
 .card-numbered {
-  background: #f5f0e8;
+  background: #fff;
   color: #1a1a1a;
 }
 
+/* Corner styles */
 .card-corner {
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
   line-height: 1;
-  gap: 1px;
+  gap: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-.card-corner-tl { top: 4px; left: 5px; }
-.card-corner-br { bottom: 4px; right: 5px; transform: rotate(180deg); }
+.card-corner-tl { top: 4px; left: 4px; }
+.card-corner-br { bottom: 4px; right: 4px; transform: rotate(180deg); }
 
 .card-corner-value {
-  font-size: 16px;
-  font-weight: 900;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .card-corner-sym {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .card-center-sym {
-  font-size: 2rem;
+  font-size: 2.8rem;
   line-height: 1;
-}
-
-/* Trump (purple) highlight */
-.card-trump .card-corner-value { color: var(--c-purple); }
-.card-trump::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: calc(var(--card-r) - 1px);
-  border: 3px solid var(--c-purple);
-  opacity: 0.6;
-  pointer-events: none;
+  opacity: 0.9;
 }
 
 /* Special cards */
 .card-special {
-  padding: 6px 4px;
-  text-align: center;
-  gap: 4px;
+  /* Default dark bg overridden by inline styles usually, but let's set defaults */
+  background: #fff; 
 }
 
 .card-special-icon {
-  font-size: 2rem;
+  font-size: 3rem;
   line-height: 1;
+  margin-bottom: 2px;
 }
 
 .card-special-name {
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 1.1;
+  color: #333; /* Dark text for readability on white */
+}
+
+/* Sidebar Styles */
+.side-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  overflow-y: auto;
+}
+
+.side-header {
+  margin-bottom: 20px;
+}
+.side-title {
+  color: var(--c-gold);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.side-round {
+  color: var(--c-text-dim);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 12px;
+}
+
+.side-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.side-player {
+  display: flex;
+  align-items: center;
+  background: var(--c-surface2);
+  padding: 10px;
+  border-radius: 8px;
+  border-left: 4px solid transparent;
+  transition: background 0.2s;
+}
+
+.side-player.active {
+  background: rgba(255,255,255,0.05);
+  border-left-color: var(--c-gold);
+}
+
+.side-p-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin-right: 10px;
+  color: #fff;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  line-height: 1.2;
+  border: 1px solid #555;
+}
+.side-player.active .side-p-avatar {
+  border-color: var(--c-gold);
+  color: var(--c-gold);
+}
+
+.side-p-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-p-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.side-p-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--c-text-dim);
+}
+
+.stat-box {
+  display: flex;
+  gap: 4px;
+}
+.stat-val { color: #fff; font-weight: 700; }
+
+.side-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  color: #444;
+  font-size: 11px;
+  text-align: center;
 }
 
 .card-special-sub {
@@ -485,23 +710,25 @@ body {
 .bid-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(7, 17, 30, 0.7);
+  background: none;
+  pointer-events: none;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  padding-bottom: 20px;
   z-index: 50;
   animation: fadeIn 0.25s ease;
 }
 
 .bid-panel {
-  background: var(--c-surface);
+  pointer-events: auto;
+  background: rgba(30, 33, 36, 0.95);
   border: 1px solid var(--c-border);
-  border-radius: 20px 20px 16px 16px;
+  border-radius: 16px;
   padding: 24px 28px 20px;
   max-width: 520px;
-  width: 100%;
-  animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  width: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  animation: popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .bid-title {
@@ -892,16 +1119,93 @@ button:active:not(:disabled) { transform: scale(0.97); }
   border-bottom: 1px solid #2d5a2d;
 }
 .debug-badge { color: #7ecf7e; font-size: 12px; font-weight: 600; }
-.debug-wrapper .sk-board { flex: 1; height: auto; }
+.debug-wrapper .sk-board { flex: 1;}
 
 /* Leave button */
 .leave-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 999;
   background: var(--c-surface2);
   border: 1px solid var(--c-border);
   color: var(--c-text-dim);
   font-size: 12px;
   padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
+.leave-btn:hover {
+  background: var(--c-danger);
+  color: #fff;
+  border-color: var(--c-danger);
+}
+
+/* ================================================================
+   SCOREBOARD MODAL
+   ================================================================ */
+.scoreboard-modal {
+  background: var(--c-surface);
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid var(--c-border);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scoreboard-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--c-gold);
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scoreboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.scoreboard-table th,
+.scoreboard-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.scoreboard-table th {
+  background: var(--c-surface2);
+  color: var(--c-text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.scoreboard-table tr:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.scoreboard-table td {
+  color: var(--c-text);
+}
+
+.scoreboard-table tr.me td {
+  font-weight: 700;
+  color: #fff;
+  background: rgba(241, 196, 15, 0.05); /* Gold tint */
+}
+
+.score-positive { color: var(--c-success); }
+.score-negative { color: var(--c-danger); }
 
 /* App wrapper */
 .app { height: 100dvh; }

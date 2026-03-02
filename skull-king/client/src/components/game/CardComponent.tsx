@@ -1,20 +1,20 @@
 import { Card, Suit } from '../../game/types';
 
 const SUIT_CFG: Record<Suit, { sym: string; color: string; bg: string }> = {
-  yellow: { sym: '🦜', color: '#b8900a', bg: '#fdf6dc' },
-  blue:   { sym: '⚓', color: '#2060b0', bg: '#deeeff' },
-  purple: { sym: '☠️', color: '#7030a0', bg: '#f0e8ff' },
-  green:  { sym: '💰', color: '#1a7030', bg: '#ddf5e4' },
+  yellow: { sym: '🦜', color: '#d4ac0d', bg: '#ffffff' },
+  blue:   { sym: '⚓', color: '#2e86c1', bg: '#ffffff' },
+  purple: { sym: '☠️', color: '#884ea0', bg: '#ffffff' },
+  green:  { sym: '💰', color: '#27ae60', bg: '#ffffff' },
 };
 
 const SPECIAL_CFG: Record<string, { icon: string; name: string; bg: string; border: string; textColor: string }> = {
-  skull_king:  { icon: '☠️',  name: 'Skull King',  bg: '#06000f', border: '#f0d060', textColor: '#f0d060' },
-  pirate:      { icon: '🏴‍☠️', name: 'Pirate',     bg: '#18080a', border: '#c0392b', textColor: '#f5b8b0' },
-  mermaid:     { icon: '🧜',  name: 'Sirène',      bg: '#050e1e', border: '#00bcd4', textColor: '#b2ebf2' },
-  escape:      { icon: '🏳️',  name: 'Fuite',       bg: '#d0cec8', border: '#888888', textColor: '#444444' },
-  scary_mary:  { icon: '💀',  name: 'Scary Mary',  bg: '#100010', border: '#e91e63', textColor: '#f48fb1' },
-  kraken:      { icon: '🦑',  name: 'Kraken',      bg: '#080020', border: '#7c4dff', textColor: '#ce93d8' },
-  white_whale: { icon: '🐋',  name: 'Baleine Bl.', bg: '#e8f4ff', border: '#4fc3f7', textColor: '#01579b' },
+  skull_king:  { icon: '☠️',  name: 'Skull King',  bg: '#2c3e50', border: '#f1c40f', textColor: '#f1c40f' },
+  pirate:      { icon: '🏴‍☠️', name: 'Pirate',     bg: '#ffffff', border: '#c0392b', textColor: '#c0392b' },
+  mermaid:     { icon: '🧜',  name: 'Sirène',      bg: '#ffffff', border: '#1abc9c', textColor: '#16a085' },
+  escape:      { icon: '🏳️',  name: 'Fuite',       bg: '#ffffff', border: '#bdc3c7', textColor: '#95a5a6' },
+  scary_mary:  { icon: '💀',  name: 'Scary Mary',  bg: '#ffffff', border: '#8e44ad', textColor: '#8e44ad' },
+  kraken:      { icon: '🦑',  name: 'Kraken',      bg: '#ffffff', border: '#27ae60', textColor: '#27ae60' },
+  white_whale: { icon: '🐋',  name: 'Baleine',     bg: '#ffffff', border: '#3498db', textColor: '#3498db' },
 };
 
 const PIRATE_NAMES: Record<string, string> = {
