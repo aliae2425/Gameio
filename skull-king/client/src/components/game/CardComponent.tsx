@@ -1,18 +1,18 @@
 import { Card, Suit } from '../../game/types';
 
 const SUIT_CFG: Record<Suit, { sym: string; color: string; bg: string }> = {
-  yellow: { sym: '🦜', color: '#d4ac0d', bg: '#ffffff' },
+  yellow: { sym: '💰', color: '#d4ac0d', bg: '#ffffff' },
   blue:   { sym: '⚓', color: '#2e86c1', bg: '#ffffff' },
-  purple: { sym: '☠️', color: '#884ea0', bg: '#ffffff' },
-  green:  { sym: '💰', color: '#27ae60', bg: '#ffffff' },
+  purple: { sym: '🐦‍⬛', color: '#18101b', bg: '#ffffff' },
+  green:  { sym: '🌿', color: '#27ae60', bg: '#ffffff' },
 };
 
 const SPECIAL_CFG: Record<string, { icon: string; name: string; bg: string; border: string; textColor: string }> = {
-  skull_king:  { icon: '☠️',  name: 'Skull King',  bg: '#2c3e50', border: '#f1c40f', textColor: '#f1c40f' },
+  skull_king:  { icon: '👑',  name: 'Skull King',  bg: '#2c3e50', border: '#f1c40f', textColor: '#f1c40f' },
   pirate:      { icon: '🏴‍☠️', name: 'Pirate',     bg: '#ffffff', border: '#c0392b', textColor: '#c0392b' },
   mermaid:     { icon: '🧜',  name: 'Sirène',      bg: '#ffffff', border: '#1abc9c', textColor: '#16a085' },
   escape:      { icon: '🏳️',  name: 'Fuite',       bg: '#ffffff', border: '#bdc3c7', textColor: '#95a5a6' },
-  scary_mary:  { icon: '💀',  name: 'Scary Mary',  bg: '#ffffff', border: '#8e44ad', textColor: '#8e44ad' },
+  scary_mary:  { icon: '👰‍♀️',  name: 'Scary Mary',  bg: '#ffffff', border: '#8e44ad', textColor: '#8e44ad' },
   kraken:      { icon: '🦑',  name: 'Kraken',      bg: '#ffffff', border: '#27ae60', textColor: '#27ae60' },
   white_whale: { icon: '🐋',  name: 'Baleine',     bg: '#ffffff', border: '#3498db', textColor: '#3498db' },
 };
