@@ -308,6 +308,11 @@ export const SkullKingGame: Game<SkullKingGameState> = {
 
         G.scoreHistory.push(roundScores);
 
+        // Réinitialiser les mises pour éviter que la phase d'enchères ne soit sautée (endIf true)
+        for (const id of G.playerOrder) {
+          G.players[id].bid = null;
+        }
+
         if (G.round!.roundNumber === 10) {
           events.endGame({ winner: findWinner(G) });
         } else {

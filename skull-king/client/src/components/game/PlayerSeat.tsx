@@ -20,7 +20,7 @@ export function PlayerSeat({ player, isActive, isCurrentTurn }: Props) {
       {/* Mini card backs */}
       <div className="seat-cards">
         {Array.from({ length: cardCount }, (_, i) => (
-          <div key={i} className="seat-card-mini" />
+          <div key={i} className="seat-card-mini" title="Dos de carte" />
         ))}
         {cardCount === 0 && <span style={{ fontSize: 10, color: 'var(--c-text-dim)' }}>∅</span>}
       </div>
