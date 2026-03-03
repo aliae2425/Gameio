@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { SkullKingGameState } from '../../game/types';
 import { PLAYER_COLORS } from './ScoreChart';
 
@@ -9,6 +10,8 @@ interface Props {
 
 export function GameSidebar({ G, playerID, matchID }: Props) {
   const roundNum = G.round?.roundNumber ?? 0;
+  const [hovered, setHovered] = useState<{ round: number; y: number } | null>(null);
+  const hoveredData = hovered ? G.scoreHistory.find(rs => rs.round === hovered.round) : null;
 
   return (
     <aside className="sk-sidebar side-panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
@@ -99,8 +102,20 @@ export function GameSidebar({ G, playerID, matchID }: Props) {
               </thead>
               <tbody>
                 {G.scoreHistory.map((rs) => (
-                  <tr key={rs.round} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td style={{ padding: '3px 4px', color: '#555', fontWeight: 600, fontSize: 10 }}>
+                  <tr
+                    key={rs.round}
+                    style={{
+                      borderBottom: '1px solid rgba(255,255,255,0.04)',
+                      background: hovered?.round === rs.round ? 'rgba(255,255,255,0.06)' : undefined,
+                      cursor: 'default',
+                    }}
+                    onMouseEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setHovered({ round: rs.round, y: rect.top + rect.height / 2 });
+                    }}
+                    onMouseLeave={() => setHovered(null)}
+                  >
+                    <td style={{ padding: '3px 4px', color: hovered?.round === rs.round ? '#aaa' : '#555', fontWeight: 600, fontSize: 10 }}>
                       {rs.round}
                     </td>
                     {G.playerOrder.map((id) => {
@@ -150,6 +165,74 @@ export function GameSidebar({ G, playerID, matchID }: Props) {
           ID: <span style={{ fontFamily: 'monospace', color: '#555' }}>{matchID || 'LOCAL'}</span>
         </div>
       </div>
+
+      {/* Floating round detail popup */}
+      {hoveredData && hovered && (() => {
+        const popupH = G.playerOrder.length * 36 + 44;
+        const top = Math.max(8, Math.min(hovered.y - popupH / 2, window.innerHeight - popupH - 8));
+        return (
+          <div
+            style={{
+              position: 'fixed',
+              right: 'calc(var(--sidebar-w) + 6px)',
+              top,
+              background: '#1e1f23',
+              border: '1px solid #3a3a3a',
+              borderRadius: 10,
+              padding: '12px 14px',
+              zIndex: 1000,
+              minWidth: 210,
+              boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+              pointerEvents: 'none',
+            }}
+          >
+            <div style={{ fontWeight: 700, color: '#f1c40f', fontSize: 13, marginBottom: 10, borderBottom: '1px solid #333', paddingBottom: 6 }}>
+              Manche {hoveredData.round}
+            </div>
+            {G.playerOrder.map((id, idx) => {
+              const s = hoveredData.scores[id];
+              const color = PLAYER_COLORS[idx % PLAYER_COLORS.length];
+              const isMe = id === playerID;
+              const p = G.players[id];
+              const exact = s.bid === 0 ? s.tricksWon === 0 : s.tricksWon === s.bid;
+              return (
+                <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
+                  {/* Avatar */}
+                  <div style={{
+                    width: 24, height: 24, borderRadius: '50%',
+                    background: color, color: '#18191c',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 8, fontWeight: 800, flexShrink: 0,
+                  }}>
+                    {p.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  {/* Name */}
+                  <span style={{ flex: 1, fontSize: 12, color: isMe ? '#fff' : '#aaa', fontWeight: isMe ? 700 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {p.name}
+                  </span>
+                  {/* Bid/Tricks */}
+                  <span style={{ fontSize: 11, color: exact ? '#2ecc71' : '#e74c3c', fontWeight: 600 }}>
+                    {s.tricksWon}/{s.bid}
+                  </span>
+                  {/* Bonus */}
+                  {s.bonuses > 0 && (
+                    <span style={{ fontSize: 10, color: '#f39c12', fontWeight: 600 }}>
+                      +{s.bonuses}
+                    </span>
+                  )}
+                  {/* Round points */}
+                  <span style={{
+                    fontSize: 12, fontWeight: 800, minWidth: 36, textAlign: 'right',
+                    color: s.roundPoints < 0 ? '#e74c3c' : s.roundPoints > 0 ? '#2ecc71' : '#666',
+                  }}>
+                    {s.roundPoints > 0 ? `+${s.roundPoints}` : s.roundPoints}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
 
     </aside>
   );
