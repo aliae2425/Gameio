@@ -4,7 +4,9 @@
       "WebFetch(domain:boardgame.io)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(npm install)",
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "Bash(d:/00_Dev/Gameio/client/index.html:*)",
+      "Bash(npx tsc --noEmit)"
     ]
   }
 }
