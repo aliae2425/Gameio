@@ -82,15 +82,6 @@ const DeclareScareMary: Move<SkullKingGameState> = ({ G, ctx, playerID, events }
   events.endTurn();
 };
 
-const ConfirmWhaleChange: Move<SkullKingGameState> = ({ G, playerID }, direction: 'up' | 'down') => {
-  if (!G.pendingWhaleChange || G.pendingWhaleChange.winnerId !== playerID) return INVALID_MOVE;
-
-  const player = G.players[playerID];
-  const roundCards = G.round!.roundNumber;
-  const delta = direction === 'up' ? G.pendingWhaleChange.changeAmount : -G.pendingWhaleChange.changeAmount;
-  player.bid = Math.max(0, Math.min(roundCards, (player.bid ?? 0) + delta));
-  G.pendingWhaleChange = null;
-};
 
 // ============================================================
 // Helpers
@@ -227,7 +218,7 @@ export const SkullKingGame: Game<SkullKingGameState> = {
         G.round!.currentTrick = startNewTrick(G);
       },
 
-      moves: { PlayCard, DeclareScareMary, ConfirmWhaleChange },
+      moves: { PlayCard, DeclareScareMary },
 
       turn: {
         order: {
@@ -266,13 +257,6 @@ export const SkullKingGame: Game<SkullKingGameState> = {
               G.players[result.winnerId].roundBonuses += result.bonusFourteens;
             }
 
-            // Baleine Blanche : ne compte que les cartes numérotées
-            if (result.whiteWhalePresent) {
-              G.pendingWhaleChange = {
-                winnerId: result.winnerId,
-                changeAmount: result.whaleNumberedCount,
-              };
-            }
           }
 
           G.round!.completedTricks.push({ ...trick });
@@ -345,12 +329,6 @@ export const SkullKingGame: Game<SkullKingGameState> = {
         return [
           { move: 'DeclareScareMary', args: ['pirate'] },
           { move: 'DeclareScareMary', args: ['escape'] },
-        ];
-      }
-      if (G.pendingWhaleChange?.winnerId === playerID) {
-        return [
-          { move: 'ConfirmWhaleChange', args: ['up'] },
-          { move: 'ConfirmWhaleChange', args: ['down'] },
         ];
       }
 

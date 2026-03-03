@@ -6,9 +6,8 @@ export interface TrickResult {
   piratesCapturedBySkullKing: number;
   mermaidCapturedSkullKing: boolean;
   mermaidsCapturedByPirate: number;
-  bonusFourteens: number;           // +10 per yellow 14, +20 per purple 14
+  bonusFourteens: number;   // +10 per yellow 14, +20 per purple 14
   whiteWhalePresent: boolean;
-  whaleNumberedCount: number;        // only numbered cards (for whale bid change)
 }
 
 function isEscapeCard(played: PlayedCard): boolean {
@@ -47,71 +46,72 @@ function cardRank(played: PlayedCard, leadSuit: Suit | null): number {
     }
   }
 
-  // Carte numérotée
   if (card.suit === 'purple') return 100 + card.value; // atout
   if (leadSuit && card.suit === leadSuit) return 10 + card.value;
-  return card.value - 100; // couleur non jouable
+  return card.value - 100;
 }
 
 export function resolveTrick(cards: PlayedCard[], leadSuit: Suit | null): TrickResult {
   const krakenPresent = cards.some(p => p.card.kind === 'special' && p.card.type === 'kraken');
   const whiteWhalePresent = cards.some(p => p.card.kind === 'special' && p.card.type === 'white_whale');
 
-  // Whale: ne compte que les cartes numérotées
-  const whaleNumberedCount = cards.filter(p => p.card.kind === 'numbered').length;
-
-  // Règle : tous fuites → le leader gagne
-  const nonFugitiveCards = cards.filter(p =>
-    !isEscapeCard(p) &&
-    !(p.card.kind === 'special' && (p.card.type === 'kraken' || p.card.type === 'white_whale'))
-  );
-
-  if (nonFugitiveCards.length === 0) {
-    return {
-      winnerId: cards[0].playerId,
-      krakenPresent,
-      piratesCapturedBySkullKing: 0,
-      mermaidCapturedSkullKing: false,
-      mermaidsCapturedByPirate: 0,
-      bonusFourteens: 0,
-      whiteWhalePresent,
-      whaleNumberedCount,
-    };
-  }
-
-  // Interaction Skull King vs Sirène
-  const skullKingPlayed = cards.find(p => p.card.kind === 'special' && p.card.type === 'skull_king');
-  const mermaidsPlayed = cards.filter(isMermaidCard);
-
   let winner: PlayedCard;
   let mermaidCapturedSkullKing = false;
 
-  if (skullKingPlayed && mermaidsPlayed.length > 0) {
-    mermaidCapturedSkullKing = true;
-    winner = mermaidsPlayed[0];
+  if (whiteWhalePresent) {
+    // Baleine Blanche : gagne le joueur avec la plus haute carte numérotée,
+    // toutes couleurs confondues. Les figures comptent pour 0.
+    // En cas d'égalité à 0 (que des figures), c'est le leader (cards[0]) qui gagne.
+    winner = cards.reduce((best, current) => {
+      const bestVal = best.card.kind === 'numbered' ? best.card.value : 0;
+      const curVal = current.card.kind === 'numbered' ? current.card.value : 0;
+      return curVal > bestVal ? current : best;
+    }, cards[0]);
   } else {
-    winner = cards.reduce((best, current) =>
-      cardRank(current, leadSuit) > cardRank(best, leadSuit) ? current : best
-    , cards[0]);
+    // Règle : tous fuites → le leader gagne
+    const nonFugitiveCards = cards.filter(p =>
+      !isEscapeCard(p) &&
+      !(p.card.kind === 'special' && (p.card.type === 'kraken' || p.card.type === 'white_whale'))
+    );
+
+    if (nonFugitiveCards.length === 0) {
+      winner = cards[0];
+    } else {
+      const skullKingPlayed = cards.find(p => p.card.kind === 'special' && p.card.type === 'skull_king');
+      const mermaidsPlayed = cards.filter(isMermaidCard);
+
+      if (skullKingPlayed && mermaidsPlayed.length > 0) {
+        // Sirène bat le Skull King
+        mermaidCapturedSkullKing = true;
+        winner = mermaidsPlayed[0];
+      } else {
+        winner = cards.reduce((best, current) =>
+          cardRank(current, leadSuit) > cardRank(best, leadSuit) ? current : best
+        , cards[0]);
+      }
+    }
   }
 
-  // Pirates capturés par Skull King (annulé si Kraken)
+  // Bonus spéciaux — annulés si Kraken ou Baleine (la Baleine neutralise les figures)
   let piratesCapturedBySkullKing = 0;
-  if (
-    winner.card.kind === 'special' &&
-    winner.card.type === 'skull_king' &&
-    !krakenPresent
-  ) {
-    piratesCapturedBySkullKing = cards.filter(isPirateCard).length;
-  }
-
-  // Sirènes capturées par un Pirate
   let mermaidsCapturedByPirate = 0;
-  if (isPirateCard(winner) && !krakenPresent) {
-    mermaidsCapturedByPirate = cards.filter(isMermaidCard).length;
+
+  if (!krakenPresent && !whiteWhalePresent) {
+    if (winner.card.kind === 'special' && winner.card.type === 'skull_king') {
+      piratesCapturedBySkullKing = cards.filter(isPirateCard).length;
+    }
+    if (isPirateCard(winner)) {
+      mermaidsCapturedByPirate = cards.filter(isMermaidCard).length;
+    }
+    if (mermaidCapturedSkullKing) {
+      // already set above
+    }
+  } else {
+    mermaidCapturedSkullKing = false;
   }
 
-  // Bonus 14 : +10 pour un 14 jaune, +20 pour un 14 violet
+  // Bonus 14 : s'applique même avec la Baleine (cartes numérotées valides)
+  // Annulé uniquement si Kraken
   let bonusFourteens = 0;
   if (!krakenPresent) {
     for (const p of cards) {
@@ -129,6 +129,5 @@ export function resolveTrick(cards: PlayedCard[], leadSuit: Suit | null): TrickR
     mermaidsCapturedByPirate,
     bonusFourteens,
     whiteWhalePresent,
-    whaleNumberedCount,
   };
 }

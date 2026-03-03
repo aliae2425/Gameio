@@ -6,7 +6,6 @@ import { GameSidebar } from './GameSidebar';
 import { PlayerSeat } from './PlayerSeat';
 import { CenterTrick } from './CenterTrick';
 import { ScaryMaryModal } from './ScaryMaryModal';
-import { WhaleModal } from './WhaleModal';
 import { ScoreChart, PLAYER_COLORS } from './ScoreChart';
 
 function getPositionClass(myIndex: number, targetIndex: number, total: number) {
@@ -207,13 +206,6 @@ export function SkullKingBoard({
         <ScaryMaryModal onChoice={(choice) => moves.DeclareScareMary(choice)} />
       )}
 
-      {G.pendingWhaleChange?.winnerId === playerID && myPlayer && (
-        <WhaleModal
-          changeAmount={G.pendingWhaleChange.changeAmount}
-          currentBid={myPlayer.bid ?? 0}
-          onChoice={(direction) => moves.ConfirmWhaleChange(direction)}
-        />
-      )}
     </div>
   );
 }
