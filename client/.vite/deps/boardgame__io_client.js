@@ -1,0 +1,29 @@
+import {
+  Client,
+  LobbyClient,
+  LobbyClientError
+} from "./chunk-PA23ZZTF.js";
+import "./chunk-DGK5M45N.js";
+import {
+  require_setImmediate
+} from "./chunk-B4WEGFWS.js";
+import {
+  require_rfc6902
+} from "./chunk-V5B5JIDC.js";
+import {
+  require_lodash
+} from "./chunk-7UN2VTY6.js";
+import {
+  __toESM
+} from "./chunk-G3PMV62Z.js";
+
+// node_modules/boardgame.io/dist/esm/client.js
+var import_lodash = __toESM(require_lodash());
+var import_rfc6902 = __toESM(require_rfc6902());
+var import_setimmediate = __toESM(require_setImmediate());
+export {
+  Client,
+  LobbyClient,
+  LobbyClientError
+};
+//# sourceMappingURL=boardgame__io_client.js.map

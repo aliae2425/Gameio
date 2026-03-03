@@ -1,0 +1,91 @@
+{
+  "hash": "2906cb69",
+  "configHash": "b719463f",
+  "lockfileHash": "7c726636",
+  "browserHash": "6ae0aa7e",
+  "optimized": {
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "04a6f0e8",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "d7e0d6ce",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "1cc87cb4",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "5a6238e8",
+      "needsInterop": false
+    },
+    "boardgame.io/client": {
+      "src": "../../node_modules/boardgame.io/dist/esm/client.js",
+      "file": "boardgame__io_client.js",
+      "fileHash": "999ca8ae",
+      "needsInterop": false
+    },
+    "boardgame.io/react": {
+      "src": "../../node_modules/boardgame.io/dist/esm/react.js",
+      "file": "boardgame__io_react.js",
+      "fileHash": "88731603",
+      "needsInterop": false
+    },
+    "boardgame.io/multiplayer": {
+      "src": "../../node_modules/boardgame.io/dist/esm/multiplayer.js",
+      "file": "boardgame__io_multiplayer.js",
+      "fileHash": "55ac445e",
+      "needsInterop": false
+    },
+    "boardgame.io/ai": {
+      "src": "../../node_modules/boardgame.io/dist/esm/ai.js",
+      "file": "boardgame__io_ai.js",
+      "fileHash": "d6437b24",
+      "needsInterop": false
+    },
+    "boardgame.io/core": {
+      "src": "../../node_modules/boardgame.io/dist/esm/core.js",
+      "file": "boardgame__io_core.js",
+      "fileHash": "6632dabb",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-TNTPHDQH": {
+      "file": "chunk-TNTPHDQH.js"
+    },
+    "chunk-32E4H3EV": {
+      "file": "chunk-32E4H3EV.js"
+    },
+    "chunk-PA23ZZTF": {
+      "file": "chunk-PA23ZZTF.js"
+    },
+    "chunk-FEESOCER": {
+      "file": "chunk-FEESOCER.js"
+    },
+    "chunk-DGK5M45N": {
+      "file": "chunk-DGK5M45N.js"
+    },
+    "chunk-B4WEGFWS": {
+      "file": "chunk-B4WEGFWS.js"
+    },
+    "chunk-V5B5JIDC": {
+      "file": "chunk-V5B5JIDC.js"
+    },
+    "chunk-7UN2VTY6": {
+      "file": "chunk-7UN2VTY6.js"
+    },
+    "chunk-G3PMV62Z": {
+      "file": "chunk-G3PMV62Z.js"
+    }
+  }
+}

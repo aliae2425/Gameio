@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../node_modules/boardgame.io/dist/esm/ai.js"],
+  "sourcesContent": ["import './turn-order-8cc4909b.js';\nimport 'immer';\nimport './plugin-random-087f861e.js';\nimport 'lodash.isplainobject';\nimport './reducer-24ea3e4c.js';\nimport 'rfc6902';\nimport 'setimmediate';\nexport { B as Bot, M as MCTSBot, R as RandomBot, a as Simulate, S as Step } from './ai-7998b00f.js';\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;AAGA,oBAAO;AAEP,qBAAO;AACP,0BAAO;",
+  "names": []
+}
