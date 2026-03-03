@@ -7,6 +7,7 @@ import { PlayerSeat } from './PlayerSeat';
 import { CenterTrick } from './CenterTrick';
 import { ScaryMaryModal } from './ScaryMaryModal';
 import { WhaleModal } from './WhaleModal';
+import { ScoreChart, PLAYER_COLORS } from './ScoreChart';
 
 function getPositionClass(myIndex: number, targetIndex: number, total: number) {
   if (myIndex === -1) return ''; // Should handle spectator logic if needed
@@ -64,19 +65,66 @@ export function SkullKingBoard({
   /* ---- Game Over ---- */
   if (ctx.gameover) {
     const winner = G.players[ctx.gameover.winner];
+    const sorted = [...G.playerOrder].sort(
+      (a, b) => G.players[b].totalScore - G.players[a].totalScore
+    );
     return (
-      <div className="gameover">
-        <div className="gameover-title">☠️ Partie terminée !</div>
-        <div className="gameover-winner">
-          🏆 Vainqueur : {winner?.name ?? ctx.gameover.winner}
-        </div>
-        <div style={{ marginTop: 8, color: 'var(--c-text-dim)', fontSize: 14 }}>
-          {G.playerOrder.map(id => (
-            <div key={id} style={{ margin: '4px 0' }}>
-              {G.players[id].name} — {G.players[id].totalScore} pts
+      <div className="sk-board">
+        {/* Left: chart + winner */}
+        <div className="sk-game-area" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, padding: 32, background: '#1a1b1e' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div className="gameover-title" style={{ marginBottom: 6 }}>☠️ Partie terminée !</div>
+            <div className="gameover-winner">
+              🏆 {winner?.name ?? ctx.gameover.winner}
             </div>
-          ))}
+          </div>
+
+          {/* SVG score evolution chart */}
+          <div style={{ width: '100%', maxWidth: 520, padding: '0 8px' }}>
+            <div style={{ fontSize: 11, color: '#555', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10, textAlign: 'center' }}>
+              Évolution des scores
+            </div>
+            <ScoreChart G={G} playerID={playerID ?? null} />
+          </div>
+
+          {/* Ranking */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 220 }}>
+            {sorted.map((id, rank) => {
+              const p = G.players[id];
+              const isMe = id === playerID;
+              const origIdx = G.playerOrder.indexOf(id);
+              const color = PLAYER_COLORS[origIdx % PLAYER_COLORS.length];
+              const medals = ['🥇', '🥈', '🥉'];
+              return (
+                <div key={id} style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  background: isMe ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.02)',
+                  border: `1px solid ${isMe ? color : 'rgba(255,255,255,0.08)'}`,
+                  borderRadius: 8, padding: '8px 14px',
+                }}>
+                  <span style={{ fontSize: 18, width: 24 }}>{medals[rank] ?? `${rank + 1}.`}</span>
+                  <div style={{
+                    width: 32, height: 32, borderRadius: '50%',
+                    background: color, color: '#18191c',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontWeight: 800, fontSize: 12,
+                  }}>
+                    {p.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  <span style={{ flex: 1, color: isMe ? '#fff' : '#ccc', fontWeight: isMe ? 700 : 400 }}>
+                    {p.name}{isMe ? ' (Moi)' : ''}
+                  </span>
+                  <span style={{ fontWeight: 800, fontSize: 15, color }}>
+                    {p.totalScore} pts
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Right: sidebar with full score history */}
+        <GameSidebar G={G} playerID={playerID ?? null} matchID={matchID} />
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import { SkullKingGameState } from '../../game/types';
+import { PLAYER_COLORS } from './ScoreChart';
 
 interface Props {
   G: SkullKingGameState;
@@ -10,40 +11,39 @@ export function GameSidebar({ G, playerID, matchID }: Props) {
   const roundNum = G.round?.roundNumber ?? 0;
 
   return (
-    <aside className="sk-sidebar side-panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <aside className="sk-sidebar side-panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
 
       {/* Header */}
-      <div className="side-header">
+      <div className="side-header" style={{ padding: '16px 14px 12px' }}>
         <div className="side-title">Skull King</div>
         <div className="side-round">Manche {roundNum} / 10</div>
       </div>
 
-      {/* Current round — bid / tricks */}
-      <div className="side-list">
-        <div style={{ padding: '0 10px 4px', display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#aaa', textTransform: 'uppercase' }}>
+      {/* Current round — bid / tricks per player */}
+      <div style={{ padding: '0 10px 8px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#666', textTransform: 'uppercase', padding: '0 2px' }}>
           <span>Joueur</span>
           <span style={{ display: 'flex', gap: 12 }}>
             <span>Mise</span>
             <span>Plis</span>
           </span>
         </div>
-
-        {G.playerOrder.map(id => {
+        {G.playerOrder.map((id, idx) => {
           const p = G.players[id];
           const isMe = id === playerID;
+          const color = PLAYER_COLORS[idx % PLAYER_COLORS.length];
           return (
-            <div key={id} className={`side-player ${isMe ? 'active' : ''}`}>
-              <div className="side-p-avatar">
+            <div key={id} className={`side-player ${isMe ? 'active' : ''}`}
+              style={{ borderLeftColor: isMe ? color : 'transparent' }}>
+              <div className="side-p-avatar" style={{ background: color, color: '#18191c', border: 'none' }}>
                 {p.name.substring(0, 2).toUpperCase()}
               </div>
               <div className="side-p-info">
-                <span className="side-p-name">
-                  {p.name}{isMe ? ' (Moi)' : ''}
-                </span>
+                <span className="side-p-name">{p.name}{isMe ? ' (Moi)' : ''}</span>
                 <div className="side-p-stats">
-                  <span style={{ fontWeight: 700, color: 'var(--c-gold)' }}>{p.totalScore} pts</span>
+                  <span style={{ fontWeight: 700, color }}>{p.totalScore} pts</span>
                   <div className="stat-box">
-                    <span className="stat-val" style={{ color: '#f1c40f' }}>{p.bid ?? '-'}</span>
+                    <span className="stat-val" style={{ color: '#f1c40f' }}>{p.bid ?? '–'}</span>
                     <span style={{ margin: '0 4px', color: '#555' }}>/</span>
                     <span className="stat-val" style={{ color: '#2ecc71' }}>{p.tricksWon}</span>
                   </div>
@@ -54,71 +54,90 @@ export function GameSidebar({ G, playerID, matchID }: Props) {
         })}
       </div>
 
-      {/* Score history table — always visible, scrollable */}
-      <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--c-border)', margin: '0 0' }}>
-        <div style={{ padding: '6px 10px 4px', fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-          Historique des scores
+      {/* Score history — transposed: avatars as columns, manches as rows */}
+      <div style={{
+        flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column',
+        borderTop: '1px solid #2a2a2a',
+      }}>
+        <div style={{ padding: '6px 10px 4px', fontSize: 10, color: '#555', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+          Historique
         </div>
 
         {G.scoreHistory.length === 0 ? (
-          <div style={{ padding: '8px 10px', fontSize: 12, color: 'var(--c-text-dim)', fontStyle: 'italic' }}>
+          <div style={{ padding: '6px 12px', fontSize: 11, color: '#444', fontStyle: 'italic' }}>
             Aucune manche complétée
           </div>
         ) : (
-          <div style={{ overflowX: 'auto', overflowY: 'auto', flex: 1, padding: '0 6px 8px' }}>
+          <div style={{ overflowY: 'auto', overflowX: 'auto', flex: 1, padding: '0 8px 8px' }}>
             <table style={{ borderCollapse: 'collapse', fontSize: 11, width: '100%' }}>
               <thead>
                 <tr>
-                  <th style={{ textAlign: 'left', padding: '3px 4px', color: '#888', position: 'sticky', left: 0, background: 'var(--c-surface)', whiteSpace: 'nowrap' }}>
-                    Joueur
+                  <th style={{ padding: '3px 4px 5px', textAlign: 'left', color: '#555', fontWeight: 600, fontSize: 10, width: 22 }}>
+                    M
                   </th>
-                  {G.scoreHistory.map(rs => (
-                    <th key={rs.round} style={{ padding: '3px 4px', color: '#888', minWidth: 28, textAlign: 'center' }}>
-                      M{rs.round}
-                    </th>
-                  ))}
-                  <th style={{ padding: '3px 4px', color: 'var(--c-gold)', fontWeight: 700, textAlign: 'center', minWidth: 40 }}>
-                    Total
-                  </th>
+                  {G.playerOrder.map((id, idx) => {
+                    const p = G.players[id];
+                    const isMe = id === playerID;
+                    const color = PLAYER_COLORS[idx % PLAYER_COLORS.length];
+                    return (
+                      <th key={id} style={{ padding: '2px 3px 5px', textAlign: 'center' }}>
+                        <div style={{
+                          width: 26, height: 26, borderRadius: '50%',
+                          background: color,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          margin: '0 auto',
+                          fontSize: 9, fontWeight: 800, color: '#18191c',
+                          outline: isMe ? '2px solid rgba(255,255,255,0.7)' : 'none',
+                          outlineOffset: 1,
+                        }} title={p.name}>
+                          {p.name.substring(0, 2).toUpperCase()}
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
-                {G.playerOrder.map(id => {
-                  const p = G.players[id];
-                  const isMe = id === playerID;
-                  return (
-                    <tr key={id} style={{ background: isMe ? 'rgba(241,196,15,0.06)' : undefined }}>
-                      <td style={{
-                        textAlign: 'left', padding: '3px 4px',
-                        color: isMe ? 'var(--c-gold)' : '#ccc',
-                        fontWeight: isMe ? 700 : 400,
-                        whiteSpace: 'nowrap', maxWidth: 64,
-                        overflow: 'hidden', textOverflow: 'ellipsis',
-                        position: 'sticky', left: 0,
-                        background: isMe ? 'rgba(241,196,15,0.06)' : 'var(--c-surface)',
-                      }}>
-                        {p.name.substring(0, 9)}
-                      </td>
-                      {G.scoreHistory.map(rs => {
-                        const score = rs.scores[id]?.roundPoints ?? 0;
-                        const bonus = rs.scores[id]?.bonuses ?? 0;
-                        return (
-                          <td key={rs.round} style={{
-                            padding: '3px 4px', textAlign: 'center',
-                            color: score < 0 ? '#e74c3c' : score > 0 ? '#2ecc71' : '#666',
+                {G.scoreHistory.map((rs) => (
+                  <tr key={rs.round} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <td style={{ padding: '3px 4px', color: '#555', fontWeight: 600, fontSize: 10 }}>
+                      {rs.round}
+                    </td>
+                    {G.playerOrder.map((id) => {
+                      const score = rs.scores[id]?.roundPoints ?? 0;
+                      const bonus = rs.scores[id]?.bonuses ?? 0;
+                      return (
+                        <td key={id}
+                          style={{
+                            padding: '3px 3px', textAlign: 'center',
+                            color: score < 0 ? '#e74c3c' : score > 0 ? '#2ecc71' : '#444',
+                            fontWeight: score !== 0 ? 600 : 400,
                           }}
-                            title={bonus > 0 ? `dont ${bonus} pts de bonus` : undefined}
-                          >
-                            {score > 0 ? `+${score}` : score}
-                          </td>
-                        );
-                      })}
-                      <td style={{ padding: '3px 4px', textAlign: 'center', fontWeight: 800, color: 'var(--c-gold)', fontSize: 12 }}>
-                        {p.totalScore}
+                          title={bonus > 0 ? `dont +${bonus} pts bonus` : undefined}
+                        >
+                          {score > 0 ? `+${score}` : score === 0 ? '·' : score}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+                {/* Total row */}
+                <tr style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}>
+                  <td style={{ padding: '4px 4px', color: '#888', fontSize: 10, fontWeight: 700 }}>Σ</td>
+                  {G.playerOrder.map((id, idx) => {
+                    const color = PLAYER_COLORS[idx % PLAYER_COLORS.length];
+                    const isMe = id === playerID;
+                    return (
+                      <td key={id} style={{
+                        padding: '4px 3px', textAlign: 'center',
+                        fontWeight: 800, fontSize: 12,
+                        color: isMe ? color : '#ccc',
+                      }}>
+                        {G.players[id].totalScore}
                       </td>
-                    </tr>
-                  );
-                })}
+                    );
+                  })}
+                </tr>
               </tbody>
             </table>
           </div>
@@ -126,8 +145,10 @@ export function GameSidebar({ G, playerID, matchID }: Props) {
       </div>
 
       {/* Footer */}
-      <div className="side-footer">
-        <div style={{ fontSize: 11 }}>Game ID: <span style={{ fontFamily: 'monospace', color: '#7289da' }}>{matchID || 'LOCAL'}</span></div>
+      <div className="side-footer" style={{ padding: '8px 14px' }}>
+        <div style={{ fontSize: 10, color: '#444' }}>
+          ID: <span style={{ fontFamily: 'monospace', color: '#555' }}>{matchID || 'LOCAL'}</span>
+        </div>
       </div>
 
     </aside>
