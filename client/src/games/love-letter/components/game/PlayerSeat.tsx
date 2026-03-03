@@ -1,12 +1,14 @@
-import { LLPlayer } from '../../game/types';
+import { LLCard, LLPlayer } from '../../game/types';
+import { CardComponent } from './CardComponent';
 
 interface Props {
   player: LLPlayer;
   isCurrentTurn: boolean;
+  discardPile?: LLCard[];
   className?: string;
 }
 
-export function PlayerSeat({ player, isCurrentTurn, className = '' }: Props) {
+export function PlayerSeat({ player, isCurrentTurn, discardPile, className = '' }: Props) {
   const cardCount = player.hand.length;
 
   return (
@@ -39,6 +41,28 @@ export function PlayerSeat({ player, isCurrentTurn, className = '' }: Props) {
               className="opp-card-back"
               style={{ top: i * -2, left: i * 2, transform: `rotate(${i * 3 - cardCount}deg)`, zIndex: i }}
             />
+          ))}
+        </div>
+      )}
+
+      {/* Discard pile fan */}
+      {discardPile && discardPile.length > 0 && (
+        <div
+          className="seat-discard-fan"
+          style={{ width: (discardPile.length - 1) * 14 + 38 }}
+        >
+          {discardPile.map((card, i) => (
+            <div
+              key={card.id}
+              style={{
+                position: 'absolute',
+                left: i * 14,
+                zIndex: i,
+                transform: `rotate(${(i % 3 - 1) * 5}deg)`,
+              }}
+            >
+              <CardComponent card={card} mini />
+            </div>
           ))}
         </div>
       )}

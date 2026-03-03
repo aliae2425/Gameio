@@ -163,6 +163,7 @@ export function LoveLetterBoard({
                 key={id}
                 player={G.players[id]}
                 isCurrentTurn={ctx.currentPlayer === id}
+                discardPile={G.players[id].discardPile}
                 className={posClass}
               />
             );
@@ -171,6 +172,15 @@ export function LoveLetterBoard({
           {/* My Hand */}
           {myPlayer && myPlayer.active && (
             <div className="my-hand-container">
+              {/* My discard pile */}
+              {myPlayer.discardPile.length > 0 && (
+                <div className="my-discard-row">
+                  <span className="my-discard-label">Défausse :</span>
+                  {myPlayer.discardPile.map(card => (
+                    <CardComponent key={card.id} card={card} mini />
+                  ))}
+                </div>
+              )}
               <div className="player-hand">
                 {myPlayer.hand.map((card, i) => {
                   if ((card.name as string) === 'hidden') return null;
@@ -209,6 +219,14 @@ export function LoveLetterBoard({
             <div className="my-hand-container" style={{ textAlign: 'center', color: 'var(--c-text-dim)' }}>
               <div style={{ fontSize: 28, marginBottom: 8 }}>💀</div>
               Vous êtes éliminé·e de cette manche
+              {myPlayer.discardPile.length > 0 && (
+                <div className="my-discard-row" style={{ justifyContent: 'center', marginTop: 10 }}>
+                  <span className="my-discard-label">Défausse :</span>
+                  {myPlayer.discardPile.map(card => (
+                    <CardComponent key={card.id} card={card} mini />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

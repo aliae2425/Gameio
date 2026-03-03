@@ -17,10 +17,11 @@ interface Props {
   disabled?: boolean;
   back?: boolean;
   showDesc?: boolean;
+  mini?: boolean;
   className?: string;
 }
 
-export function CardComponent({ card, onClick, disabled, back, showDesc, className = '' }: Props) {
+export function CardComponent({ card, onClick, disabled, back, showDesc, mini, className = '' }: Props) {
   if (back || card.name === 'hidden') {
     return <div className={`card card-back ${className}`} />;
   }
@@ -30,7 +31,7 @@ export function CardComponent({ card, onClick, disabled, back, showDesc, classNa
 
   return (
     <div
-      className={`card card-special ${disabled ? 'card-disabled' : ''} ${className}`}
+      className={`card card-special ${disabled ? 'card-disabled' : ''} ${mini ? 'card-mini' : ''} ${className}`}
       style={{ background: cfg.bg, borderColor: cfg.border, color: cfg.textColor }}
       onClick={!disabled ? onClick : undefined}
       title={cfg.label}

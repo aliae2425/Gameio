@@ -249,17 +249,28 @@ export const SkullKingGame: Game<SkullKingGameState> = {
           if (!result.krakenPresent) {
             G.players[result.winnerId].tricksWon += 1;
 
+            // Skull King capture des pirates : +30 par pirate
             if (result.piratesCapturedBySkullKing > 0) {
               G.players[result.winnerId].roundBonuses += 30 * result.piratesCapturedBySkullKing;
             }
+            // Sirène capture le Skull King : +40
             if (result.mermaidCapturedSkullKing) {
-              G.players[result.winnerId].roundBonuses += 50;
+              G.players[result.winnerId].roundBonuses += 40;
+            }
+            // Pirate capture une Sirène : +20 par sirène
+            if (result.mermaidsCapturedByPirate > 0) {
+              G.players[result.winnerId].roundBonuses += 20 * result.mermaidsCapturedByPirate;
+            }
+            // Bonus 14 : +10 jaune, +20 violet
+            if (result.bonusFourteens > 0) {
+              G.players[result.winnerId].roundBonuses += result.bonusFourteens;
             }
 
+            // Baleine Blanche : ne compte que les cartes numérotées
             if (result.whiteWhalePresent) {
               G.pendingWhaleChange = {
                 winnerId: result.winnerId,
-                changeAmount: result.trickSize,
+                changeAmount: result.whaleNumberedCount,
               };
             }
           }

@@ -421,6 +421,45 @@ body {
   color: #333; /* Dark text for readability on white */
 }
 
+/* Mini card variant (for discard pile display) */
+.card-mini {
+  width: 38px !important;
+  height: 56px !important;
+  border-radius: 4px !important;
+  cursor: default !important;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35) !important;
+}
+.card-mini .card-corner-value { font-size: 9px !important; }
+.card-mini .card-special-icon { font-size: 1.4rem !important; margin-bottom: 0 !important; }
+.card-mini .card-special-name { display: none !important; }
+.card-mini .card-special-sub  { display: none !important; }
+.card-mini .card-corner-tl { top: 2px; left: 3px; }
+.card-mini .card-corner-br { bottom: 2px; right: 3px; }
+
+/* Discard fan for opponent seats */
+.seat-discard-fan {
+  position: relative;
+  margin-top: 8px;
+  height: 58px;
+  min-width: 38px;
+}
+
+/* My discard row at bottom of board */
+.my-discard-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.my-discard-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  white-space: nowrap;
+  margin-right: 2px;
+}
+
 /* Sidebar Styles */
 .side-panel {
   flex: 1;
