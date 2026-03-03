@@ -1,14 +1,12 @@
-import { useState } from 'react';
 import type { BoardProps } from 'boardgame.io/react';
 import { SkullKingGameState } from '../../game/types';
 import { PlayerHand } from './PlayerHand';
 import { BiddingPanel } from './BiddingPanel';
-import { GameSidebar } from './GameSidebar'; // Changed from ScoreSidebar
+import { GameSidebar } from './GameSidebar';
 import { PlayerSeat } from './PlayerSeat';
 import { CenterTrick } from './CenterTrick';
 import { ScaryMaryModal } from './ScaryMaryModal';
 import { WhaleModal } from './WhaleModal';
-import { ScoreBoard } from './ScoreBoard'; // Renamed import if file was ScoreBoard.tsx
 
 function getPositionClass(myIndex: number, targetIndex: number, total: number) {
   if (myIndex === -1) return ''; // Should handle spectator logic if needed
@@ -56,8 +54,6 @@ export function SkullKingBoard({
   isActive,
   matchID,
 }: BoardProps<SkullKingGameState> & { matchID?: string }) {
-  const [showScore, setShowScore] = useState(false);
-  
   const myPlayer = playerID ? G.players[playerID] : null;
   const isBidding = G.phase === 'bidding';
   const isPlaying = G.phase === 'playing';
@@ -156,22 +152,9 @@ export function SkullKingBoard({
       </div>
 
       {/* ===== RIGHT: Sidebar ===== */}
-      <GameSidebar 
-        G={G} 
-        playerID={playerID ?? null} 
-        matchID={matchID} 
-        onToggleScore={() => setShowScore(!showScore)}
-      />
+      <GameSidebar G={G} playerID={playerID ?? null} matchID={matchID} />
 
       {/* ===== MODALS ===== */}
-      {showScore && (
-        <div className="bid-overlay" style={{ pointerEvents: 'auto', background: 'rgba(0,0,0,0.85)' }} onClick={() => setShowScore(false)}>
-          <div onClick={e => e.stopPropagation()}>
-             <ScoreBoard G={G} playerID={playerID} onClose={() => setShowScore(false)} />
-          </div>
-        </div>
-      )}
-
       {G.pendingScaryMary?.playerId === playerID && (
         <ScaryMaryModal onChoice={(choice) => moves.DeclareScareMary(choice)} />
       )}
