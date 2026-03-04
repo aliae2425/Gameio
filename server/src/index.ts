@@ -2,11 +2,14 @@ import { Server, Origins } from 'boardgame.io/server';
 import { SkullKingGame } from '@skull-king/SkullKingGame';
 import { LoveLetterGame } from '@love-letter/LoveLetterGame';
 
+const origins = [Origins.LOCALHOST_IN_DEVELOPMENT] as (string | RegExp | boolean)[];
+if (process.env.ALLOWED_ORIGINS) {
+  origins.push(...process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()));
+}
+
 const server = Server({
   games: [SkullKingGame, LoveLetterGame],
-  origins: [
-    Origins.LOCALHOST_IN_DEVELOPMENT,
-  ],
+  origins,
 });
 
 const PORT = Number(process.env.PORT ?? 8000);
